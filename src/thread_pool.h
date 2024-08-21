@@ -9,6 +9,7 @@
 #include <vector>
 #include <functional>
 #include <condition_variable>
+#include <type_traits>
 #include <iostream>
 
 class ThreadPool {
@@ -17,7 +18,7 @@ public:
     static ThreadPool &getInstance();
     template<typename Func, typename ...Args>
     auto addTask(Func &&func, Args &&...)
-        -> std::future<std::result_of_t<Func(Args ...)>>;
+        -> std::future<std::invoke_result_t<Func, Args...>>;
 
 private:
     explicit ThreadPool(std::size_t thread_num = std::thread::hardware_concurrency());
@@ -32,16 +33,11 @@ private:
     std::atomic_bool stop_;
 };
 
-ThreadPool &ThreadPool::getInstance() {
-    static ThreadPool pool;
-    return pool;
-}
-
 template<typename Func, typename ...Args>
-auto ThreadPool::addTask(Func &&func, Args &&...args)
--> std::future<std::result_of_t<Func(Args...)>> {
+inline auto ThreadPool::addTask(Func &&func, Args &&...args)
+-> std::future<std::invoke_result_t<Func, Args...>> {
     // Func return type
-    using FuncReturnType = std::result_of_t<Func(Args...)>;
+    using FuncReturnType = std::invoke_result_t<Func, Args...>;
     // addTask return type
     using TaskReturnType = std::future<FuncReturnType>;
     // packaged_task type
@@ -62,39 +58,5 @@ auto ThreadPool::addTask(Func &&func, Args &&...args)
     return res;
 }
 
-ThreadPool::ThreadPool(std::size_t thread_num)
-    : stop_(false) {
-    for (std::size_t i = 0; i < thread_num; ++i) {
-        threads_.emplace_back([this]() {
-            // thread does not stop until pool needs to be destroyed
-            // and the task queue is empty
-            while (true) {
-                std::unique_lock<std::mutex> ulock(task_mtx_);
-                task_cv_.wait(ulock, [this]() {
-                    return stop_ || !tasks_.empty();
-                });
-                if (stop_ && tasks_.empty()) {
-                    return;
-                }
-                Task task = std::move(tasks_.front());
-                tasks_.pop();
-                ulock.unlock();
-                task();
-            }
-        });
-    }
-}
-
-ThreadPool::~ThreadPool() {
-    std::cout << __func__ << std::endl;
-    {
-        std::lock_guard<std::mutex> lock(task_mtx_);
-        stop_.store(true);
-    }
-    task_cv_.notify_all();
-    for (auto &t : threads_) {
-        t.join();
-    }
-}
 
 #endif // _THREAD_POOL_H_

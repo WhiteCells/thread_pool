@@ -1,5 +1,6 @@
 ### C++14 Thread Pool
 
+build:
 ```sh
 cmake -B build
 cmake --build build

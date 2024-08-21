@@ -1,4 +1,4 @@
-#include "thread_pool.hpp"
+#include "src/thread_pool.h"
 
 int main(int argc, char *argv[]) {
     std::vector<std::future<int>> results;
