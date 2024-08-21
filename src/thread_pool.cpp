@@ -12,16 +12,18 @@ inline ThreadPool::ThreadPool(std::size_t thread_num)
             // thread does not stop until pool needs to be destroyed
             // and the task queue is empty
             while (true) {
-                std::unique_lock<std::mutex> ulock(task_mtx_);
-                task_cv_.wait(ulock, [this]() {
-                    return stop_ || !tasks_.empty();
-                });
-                if (stop_ && tasks_.empty()) {
-                    return;
+                Task task;
+                {
+                    std::unique_lock<std::mutex> ulock(task_mtx_);
+                    task_cv_.wait(ulock, [this]() {
+                        return stop_.load() || !tasks_.empty();
+                    });
+                    if (stop_ && tasks_.empty()) {
+                        return;
+                    }
+                    task = std::move(tasks_.front());
+                    tasks_.pop();
                 }
-                Task task = std::move(tasks_.front());
-                tasks_.pop();
-                ulock.unlock();
                 task();
             }
         });

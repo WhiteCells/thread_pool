@@ -4,6 +4,7 @@
 #include <thread>
 #include <queue>
 #include <future>
+#include <memory>
 #include <atomic>
 #include <mutex>
 #include <vector>
@@ -43,13 +44,16 @@ inline auto ThreadPool::addTask(Func &&func, Args &&...args)
     // packaged_task type
     using PackagedTaskType = std::packaged_task<FuncReturnType()>;
 
-    auto ptask = std::make_shared<PackagedTaskType>(std::bind(func, args...));
+    if (stop_.load()) {
+        return TaskReturnType {};
+    }
+
+    auto ptask = std::make_shared<PackagedTaskType>(
+        std::bind(std::forward<Func>(func), std::forward<Args>(args)...)
+    );
     TaskReturnType res = ptask->get_future();
     {
         std::lock_guard<std::mutex> ulock(task_mtx_);
-        if (stop_) {
-            throw std::runtime_error("add task error");
-        }
         tasks_.emplace([ptask]() {
             (*ptask)();
         });
@@ -57,6 +61,5 @@ inline auto ThreadPool::addTask(Func &&func, Args &&...args)
     task_cv_.notify_one();
     return res;
 }
-
 
 #endif // _THREAD_POOL_H_
