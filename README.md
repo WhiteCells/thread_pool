@@ -1,4 +1,4 @@
-### C++14 Thread Pool
+### C++17 Thread Pool
 
 build:
 ```sh
