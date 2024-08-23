@@ -11,13 +11,13 @@
 #include <functional>
 #include <condition_variable>
 #include <type_traits>
-#include <iostream>
 
 class ThreadPool {
     using Task = std::function<void()>;
+
 public:
     static ThreadPool &getInstance();
-    template<typename Func, typename ...Args>
+    template <typename Func, typename... Args>
     auto addTask(Func &&func, Args &&...)
         -> std::future<std::invoke_result_t<Func, Args...>>;
 
@@ -34,9 +34,9 @@ private:
     std::atomic_bool stop_;
 };
 
-template<typename Func, typename ...Args>
+template <typename Func, typename... Args>
 inline auto ThreadPool::addTask(Func &&func, Args &&...args)
--> std::future<std::invoke_result_t<Func, Args...>> {
+    -> std::future<std::invoke_result_t<Func, Args...>> {
     // Func return type
     using FuncReturnType = std::invoke_result_t<Func, Args...>;
     // addTask return type
@@ -45,12 +45,11 @@ inline auto ThreadPool::addTask(Func &&func, Args &&...args)
     using PackagedTaskType = std::packaged_task<FuncReturnType()>;
 
     if (stop_.load()) {
-        return TaskReturnType {};
+        return TaskReturnType{};
     }
 
     auto ptask = std::make_shared<PackagedTaskType>(
-        std::bind(std::forward<Func>(func), std::forward<Args>(args)...)
-    );
+        std::bind(std::forward<Func>(func), std::forward<Args>(args)...));
     TaskReturnType res = ptask->get_future();
     {
         std::lock_guard<std::mutex> ulock(task_mtx_);
