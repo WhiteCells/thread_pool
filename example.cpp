@@ -1,4 +1,5 @@
 #include "src/thread_pool.h"
+#include <iostream>
 
 int main(int argc, char *argv[]) {
     std::vector<std::future<int>> results;
