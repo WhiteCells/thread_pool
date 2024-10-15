@@ -27,7 +27,7 @@ if (WIN32)
         $<TARGET_FILE:thread_pool_lib>
         $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 else()
-    targettarget_link_libraries(${PROJECT_NAME} PRIVATE thread_pool_lib pthread)
+    target_link_libraries(${PROJECT_NAME} PRIVATE thread_pool_lib pthread)
 endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR})
