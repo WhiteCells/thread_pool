@@ -37,6 +37,7 @@ Standard: Auto                                        # 自动检测使用的 C+
 MaxEmptyLinesToKeep: 1                                # 最多的连续空格
 IndentCaseLabels: true                                # case 缩进
 SpaceBeforeCpp11BracedList: true                      # {} 初始化前的空格
+IndentPPDirectives: BeforeHash
 
 #BreakBeforeBraces: Stroustrup
 BreakBeforeBraces: Custom
