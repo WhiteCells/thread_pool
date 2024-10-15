@@ -12,7 +12,8 @@
 #include <condition_variable>
 #include <type_traits>
 
-class ThreadPool {
+class ThreadPool
+{
     using Task = std::function<void()>;
 
 public:
@@ -36,7 +37,8 @@ private:
 
 template <typename Func, typename... Args>
 inline auto ThreadPool::addTask(Func &&func, Args &&...args)
-    -> std::future<std::invoke_result_t<Func, Args...>> {
+    -> std::future<std::invoke_result_t<Func, Args...>>
+{
     // Func return type
     using FuncReturnType = std::invoke_result_t<Func, Args...>;
     // addTask return type
@@ -45,7 +47,7 @@ inline auto ThreadPool::addTask(Func &&func, Args &&...args)
     using PackagedTaskType = std::packaged_task<FuncReturnType()>;
 
     if (stop_.load()) {
-        return TaskReturnType{};
+        return TaskReturnType {};
     }
 
     auto ptask = std::make_shared<PackagedTaskType>(

@@ -12,7 +12,7 @@ AllowAllConstructorInitializersOnNextLine: true       # 允许所有构造函数
 AllowAllParametersOfDeclarationOnNextLine: false      # 不允许函数声明的所有参数换到下一行
 AllowShortBlocksOnASingleLine: false                  # 不允许短代码块在同一行
 AllowShortCaseLabelsOnASingleLine: false              # 不允许短的 case 标签在同一行
-AllowShortFunctionsOnASingleLine: None                # 不允许短函数在同一行，视上下文而定
+#AllowShortFunctionsOnASingleLine: None                # 不允许短函数在同一行，视上下文而定
 AllowShortIfStatementsOnASingleLine: Never            # 不允许短的 if 语句在同一行
 AllowShortLambdasOnASingleLine: None                  # 短的 lambda 表达式视情况放在一行
 AllowShortLoopsOnASingleLine: false                   # 不允许短的循环在同一行
@@ -29,11 +29,24 @@ CompactNamespaces: false                              # 不使用紧凑命名空
 ConstructorInitializerAllOnOneLineOrOnePerLine: true  # 构造函数初始化器可以全在一行或每个初始化器一行
 ConstructorInitializerIndentWidth: 4                  # 构造函数初始化器缩进为 4
 ContinuationIndentWidth: 4                            # 换行后的行缩进为 4
-Cpp11BracedListStyle: true                            # 使用 C++11 括号风格
-DerivePointerAlignment: true                          # 自动推导指针对齐方式，除非显式设置
-DisableFormat: false                                  # 不禁用格式化功能
 FixNamespaceComments: true                            # 在命名空间结束时自动添加注释
 PointerAlignment: Right                               # 指针符号对齐到类型的右侧
 SortIncludes: false                                   # 不自动排序 include 语句
+SortUsingDeclarations: false
 Standard: Auto                                        # 自动检测使用的 C++ 标准
 MaxEmptyLinesToKeep: 1                                # 最多的连续空格
+IndentCaseLabels: true                                # case 缩进
+SpaceBeforeCpp11BracedList: true                      # {} 初始化前的空格
+
+#BreakBeforeBraces: Stroustrup
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterFunction: true
+  SplitEmptyFunction: true
+  AfterClass: true
+  AfterStruct: true
+  AfterControlStatement: false
+  BeforeElse: true
+  BeforeCatch: true
+
+AllowShortFunctionsOnASingleLine: true  # 允许短函数在一行内放置

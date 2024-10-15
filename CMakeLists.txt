@@ -15,6 +15,6 @@ aux_source_directory(${PROJECT_SOURCE_DIR}/ thread_pool_demo_src)
 
 add_executable(${PROJECT_NAME} ${thread_pool_demo_src})
 
-target_link_libraries(${PROJECT_NAME} PRIVATE ${thread_pool_lib_name})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${thread_pool_lib_name} pthread)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR})

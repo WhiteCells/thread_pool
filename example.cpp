@@ -1,7 +1,8 @@
 #include "src/thread_pool.h"
 #include <iostream>
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     std::vector<std::future<int>> results;
     ThreadPool &pool = ThreadPool::getInstance();
     for (int i = 0; i < 20; ++i) {
